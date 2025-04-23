@@ -1,0 +1,37 @@
+{
+  "name": "easel-base",
+  "version": "1.0.0",
+  "description": "A base for typescript apis",
+  "keywords": [
+    "typescript",
+    "node",
+    "api",
+    "express",
+    "mongo",
+    "zod",
+    "jest",
+    "supertest"
+  ],
+  "homepage": "https://github.com/Esavwede/easel-base#readme",
+  "bugs": {
+    "url": "https://github.com/Esavwede/easel-base/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Esavwede/easel-base.git"
+  },
+  "license": "ISC",
+  "author": "ogagaoghene esavwede",
+  "type": "module",
+  "main": "app.js",
+  "scripts": {
+    "start": "node dist/app.js",
+    "test": "test",
+    "build": "tsc",
+    "dev": "ts-node-dev --respawn --transpileOnly src/app.ts"
+  },
+  "devDependencies": {
+    "ts-node-dev": "^2.0.0",
+    "typescript": "^5.8.3"
+  }
+}
