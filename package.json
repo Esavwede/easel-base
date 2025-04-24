@@ -22,16 +22,23 @@
   },
   "license": "ISC",
   "author": "ogagaoghene esavwede",
-  "type": "module",
   "main": "app.js",
   "scripts": {
-    "start": "node dist/app.js",
+    "start": "node dist/bin/server.js",
     "test": "test",
     "build": "tsc",
-    "dev": "ts-node-dev --respawn --transpileOnly src/app.ts"
+    "dev": "ts-node-dev  --respawn --transpile-only ./src/bin/server.ts"
   },
   "devDependencies": {
-    "ts-node-dev": "^2.0.0",
+    "@types/express": "^5.0.1",
+    "nodemon": "^3.1.10",
+    "ts-node": "^10.9.2",
     "typescript": "^5.8.3"
+  },
+  "dependencies": {
+    "@godaddy/terminus": "^4.12.1",
+    "dotenv": "^16.5.0",
+    "express": "^5.1.0",
+    "ts-node-dev": "^2.0.0"
   }
 }
