@@ -1,139 +1,103 @@
 "use strict";
-// import { createTerminus } from "@godaddy/terminus";
-// import * as net from "net";
-// import app from "../app";
-// import http from "http";
-// import { Application } from "express";
-// const server = http.createServer(app);
-// const connections = new Set<net.Socket>();
-// const PORT = normalizePort(process.env.PORT || "3000");
-// app.set("port", PORT);
-// server.on("listening", onListening);
-// server.on("error", onError);
-// server.on("connection", (connection) => {
-//   connections.add(connection);
-//   connection.on("close", () => {
-//     connections.delete(connection);
-//   });
-// });
-// const terminusOptions = {
-//   signals: ["SIGINT", "SIGTERM"],
-//   healthChecks: {
-//     "/health": () => Promise.resolve("UP"),
-//   },
-//   onSignal: gracefulShutDown,
-//   onShutdown: async () => {
-//     console.log("Cleanup finished, shutting down gracefully");
-//   },
-//   timeout: 15000,
-// };
-// async function gracefulShutDown() {
-//   console.log("Attempting Graceful Shutdown...");
-//   for (const connection of connections) {
-//     connection.end();
-//   }
-//   try {
-//     console.log("Closing Database Connections...");
-//     console.log("Database Connections closed");
-//   } catch (e: any) {
-//     console.error("Graceful Shutdown failed", e);
-//   }
-//   console.log("Graceful Shutdown complete");
-// }
-// async function startServer() {
-//   try {
-//     // Connect to database
-//     createTerminus(server, terminusOptions);
-//     server.listen(PORT, () => {
-//       console.log(`Server is running on port ${process.env.PORT || 3000}`);
-//     });
-//   } catch (e: any) {
-//     console.log("Error starting server", e);
-//     process.exit(1);
-//   }
-// }
-// /**
-//  * Normalize a port into a number, string, or false.
-//  */
-// function normalizePort(val: any) {
-//   const port = parseInt(val, 10);
-//   if (isNaN(port)) {
-//     // named pipe
-//     return val;
-//   }
-//   if (port >= 0) {
-//     // port number
-//     return port;
-//   }
-//   return false;
-// }
-// /**
-//  * Event listener for HTTP server "error" event.
-//  */
-// function onError(error: any) {
-//   if (error.syscall !== "listen") {
-//     throw error;
-//   }
-//   const bind = typeof PORT === "string" ? `Pipe ${PORT}` : `Port ${PORT}`;
-//   // handle specific listen errors with friendly messages
-//   switch (error.code) {
-//     case "EACCES":
-//       console.error(`${bind} requires elevated privileges`);
-//       process.exit(1);
-//       break;
-//     case "EADDRINUSE":
-//       console.error(`${bind} is already in use`);
-//       process.exit(1);
-//       break;
-//     default:
-//       throw error;
-//   }
-// }
-// function onListening() {
-//   const addr = server.address();
-//   const bind = typeof addr === "string" ? `pipe ${addr}` : `port ${addr?.port}`;
-//   console.log(`server listening on PORT: ${PORT}`);
-// }
-// process.on("uncaughtException", (err) => {
-//   console.error("Uncaught Exception:", err);
-//   process.exit(1);
-// });
-// process.on("unhandledRejection", (err) => {
-//   console.error("Unhandled Rejection:", err);
-//   process.exit(1);
-// });
-// startServer();
-// class Server {
-//   private app: Application
-//   private PORT: number | string | boolean;
-//   private server: any; // http.Server;
-//   private connections: Set<net.Socket>;
-//   private terminusOptions: any; // TerminusOptions;
-//   private gracefulShutDown: () => Promise<void>;
-//   private onSignal: () => Promise<void>;
-//   private onShutdown: () => Promise<void>;
-//   private onError: (error: any) => void;
-//   private onListening: () => void;
-//   private normalizePort: (val: any) => number | string | boolean;
-//   private startServer: () => Promise<void>;
-//   private constructor: () => void;
-//   constructor() {
-//     this.app = app
-//   }
-//   setPort(val: any) {
-//   }
-//   normalizePort(val: any) {
-//   }
-//   initialize()
-//   {
-//     this.server = http.createServer(this.app);
-//   }
-//   addEventListeners()
-//   {
-//     this.server.on("listenting", this.onListening);
-//     this.server.on("error", this.onError);
-//   }
-//   start()
-//   {
-//   }
-// }
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const config_1 = __importDefault(require("config"));
+const http_1 = __importDefault(require("http"));
+const app_1 = __importDefault(require("../app"));
+const terminus_1 = require("@godaddy/terminus");
+class Server {
+    constructor() {
+        this.connections = new Set();
+        this.port = config_1.default.get("app.port") || 3000;
+        app_1.default.set("port", this.port);
+        this.server = http_1.default.createServer(app_1.default);
+        this.initializeTerminus();
+        this.listen();
+    }
+    normalizePort(val) {
+        const port = parseInt(val, 10);
+        if (isNaN(port)) {
+            return val; // Named pipe
+        }
+        if (port >= 0) {
+            return port; // Port number
+        }
+        return false;
+    }
+    listen() {
+        this.server.on("connection", (connection) => {
+            this.connections.add(connection);
+            connection.on("close", () => {
+                this.connections.delete(connection);
+            });
+        });
+        this.server.listen(this.port);
+        this.server.on("error", this.onError.bind(this));
+        this.server.on("listening", this.onListening.bind(this));
+    }
+    onError(error) {
+        if (error.syscall !== "listen") {
+            throw error;
+        }
+        const bind = typeof this.port === "string" ? `Pipe ${this.port}` : `Port ${this.port}`;
+        // Friendly error messages
+        switch (error.code) {
+            case "EACCES":
+                console.error(`${bind} requires elevated privileges`);
+                process.exit(1);
+                break;
+            case "EADDRINUSE":
+                console.error(`${bind} is already in use`);
+                process.exit(1);
+                break;
+            default:
+                throw error;
+        }
+    }
+    onListening() {
+        const addr = this.server.address();
+        const bind = typeof addr === "string" ? `pipe ${addr}` : `port ${addr === null || addr === void 0 ? void 0 : addr.port}`;
+        console.log(`Server listening on ${bind}`);
+    }
+    initializeTerminus() {
+        const terminusConfig = {
+            signals: ["SIGINT", "SIGTERM"],
+            onSignal: this.shutDownGracefully.bind(this),
+            onShutDown: () => {
+                console.log("Terminus: Shutdown Successfully");
+            },
+            timeout: 15000,
+        };
+        (0, terminus_1.createTerminus)(this.server, terminusConfig);
+    }
+    shutDownGracefully() {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                console.log("Closing Server Gracefully...");
+                for (const connection of this.connections) {
+                    connection.end();
+                }
+                console.log("closing Database");
+                console.log("Database Closed");
+                console.log("Graceful Shutdown successful");
+            }
+            catch (e) {
+                console.log("Graceful Shutdown Failed");
+                process.exit(1);
+            }
+        });
+    }
+}
+// Start the server
+new Server();
