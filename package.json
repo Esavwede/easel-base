@@ -39,6 +39,7 @@
     "typescript": "^5.8.3"
   },
   "dependencies": {
+    "@blocklet/xss": "^0.1.32",
     "@godaddy/terminus": "^4.12.1",
     "compression": "^1.8.0",
     "config": "^3.3.12",
