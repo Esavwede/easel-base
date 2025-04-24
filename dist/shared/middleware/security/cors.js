@@ -9,6 +9,7 @@ const corsConfig = {
     origin: (origin, callback) => {
         if (!origin ||
             config_1.default.get("cors.allowedOrigins").includes(origin)) {
+            console.log("Origin allowed by CORS:", origin);
             callback(null, true);
         }
         else {
