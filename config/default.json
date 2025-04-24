@@ -1,0 +1,20 @@
+{
+  "app": {
+    "port": 3000,
+    "host": "localhost",
+    "name": "MyApp",
+    "version": "1.0.0",
+    "description": "A sample application"
+  },
+  "cors": {
+    "allowedOrigins": [
+      "https://your-frontend.com",
+      "https://another-trusted-domain.com",
+      "https://api.google.com"
+    ],
+    "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    "allowedHeaders": ["Content-Type", "Authorization"],
+    "credentials": true,
+    "maxAge": 86400
+  }
+}

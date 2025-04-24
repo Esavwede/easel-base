@@ -1,3 +1,4 @@
+import config from "config";
 import http from "http";
 import app from "../app";
 import * as net from "net";
@@ -10,7 +11,7 @@ class Server {
 
   constructor() {
     this.connections = new Set();
-    this.port = this.normalizePort(process.env.PORT || "3000");
+    this.port = config.get<number>("app.port") || 3000;
     app.set("port", this.port);
 
     this.server = http.createServer(app);
