@@ -1,0 +1,6 @@
+name: Do Nothing
+on: push
+jobs:
+  nothing:
+    runs-on: ubuntu-latest
+    steps: []
