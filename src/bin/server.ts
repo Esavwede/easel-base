@@ -3,6 +3,7 @@ import http from "http"
 import * as net from "net"
 import { createTerminus } from "@godaddy/terminus"
 import app from "../app"
+import startDatabase from "../core/database/database"
 
 class Server {
   private port: number | string | boolean
@@ -17,6 +18,7 @@ class Server {
     app.set("port", this.port)
 
     this.server = http.createServer(app)
+    startDatabase()
     this.initializeTerminus()
     this.listen()
   }

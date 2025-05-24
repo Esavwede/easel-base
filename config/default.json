@@ -16,5 +16,14 @@
     "allowedHeaders": ["Content-Type", "Authorization"],
     "credentials": true,
     "maxAge": 86400
+  },
+  "db": {
+    "options": {
+      "minPoolSize": 20,
+      "maxPoolSize": 50,
+      "maxIdleTimeMS": 30000,
+      "serverSelectionTimeoutMS": 60000,
+      "socketTimeoutMS": 30000
+    }
   }
 }
