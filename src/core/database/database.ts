@@ -1,8 +1,8 @@
 import { config } from "dotenv"
-import AppConfig from "config"
 config()
-
+import AppConfig from "config"
 import mongoose from "mongoose"
+import logger from "../logging/logger"
 
 async function startDatabase() {
   try {
@@ -10,27 +10,27 @@ async function startDatabase() {
     const db = mongoose.connection
 
     db.on("connecting", () => {
-      console.log("Connecting To Database... 🔌")
+      logger.info("Connecting To Database...")
     })
 
     db.on("connected", () => {
-      console.log("Connected To Database Successfully ✅")
+      logger.info("Connected To Database Successfully")
     })
 
     db.on("disconnecting", () => {
-      console.log("Database Disconnecting...⚠️")
+      logger.info("Database Disconnecting...")
     })
 
     db.on("disconnected", () => {
-      console.log("Database Disconnected ❌")
+      logger.info("Database Disconnected")
     })
 
     db.on("error", (e) => {
-      console.error("DATABASE_ERROR💥:", e)
+      logger.error(e, "DATABASE_ERROR:")
     })
 
     db.on("close", () => {
-      console.log("Database Connection Closed 🛑")
+      logger.info("Database Connection Closed ")
     })
 
     /**SETUP CONNECTION CONFIG */
@@ -49,8 +49,8 @@ async function startDatabase() {
     await mongoose.connect(DB_URI, connectionOptions)
     return db
   } catch (e: any) {
-    console.log("Error Occured while Starting application database")
-    console.log(e)
+    logger.error("Error Occured while Starting application database")
+    logger.error(e)
   }
 }
 

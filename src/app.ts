@@ -4,6 +4,7 @@ import compression from "compression"
 import cors from "./shared/middleware/security/cors"
 import server404ErrorHandler from "./shared/middleware/errors/server-404-handler"
 import apiErrorHandler from "./shared/middleware/errors/api-error-handler"
+import httpLogger from "./shared/middleware/logging/http-logger"
 
 const app = express()
 
@@ -17,6 +18,9 @@ app.use(compression())
 // Request Parsing
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
+
+// Logging
+app.use(httpLogger)
 
 // Health checks
 app.get("/health", (req, res) => {

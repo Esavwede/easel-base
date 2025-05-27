@@ -15,8 +15,5 @@ export default function server404ErrorHandler(req: Request, res: Response) {
     details:
       "The requested endpoint does not exist or the resource is unavailable.",
   }
-
-  console.log("404 Error")
-  console.dir(error)
   res.status(404).json(error)
 }
