@@ -5,6 +5,7 @@ import cors from "./shared/middleware/security/cors"
 import server404ErrorHandler from "./shared/middleware/errors/server-404-handler"
 import apiErrorHandler from "./shared/middleware/errors/api-error-handler"
 import httpLogger from "./shared/middleware/logging/http-logger"
+import v1Routes from "./versions/v1/modules/routes.v1"
 
 const app = express()
 
@@ -21,6 +22,9 @@ app.use(express.urlencoded({ extended: true }))
 
 // Logging
 app.use(httpLogger)
+
+// Versioned Routes
+v1Routes(app)
 
 // Health checks
 app.get("/health", (req, res) => {
