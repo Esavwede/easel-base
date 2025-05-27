@@ -10,7 +10,6 @@ const corsConfig = {
       !origin ||
       config.get<string[]>("cors.allowedOrigins").includes(origin)
     ) {
-      console.log("Origin allowed by CORS:", origin)
       callback(null, true)
     } else {
       console.log("Origin not allowed by CORS:", origin)

@@ -4,6 +4,7 @@ import * as net from "net"
 import { createTerminus } from "@godaddy/terminus"
 import app from "../app"
 import startDatabase from "../core/database/database"
+import logger from "../core/logging/logger"
 
 class Server {
   private port: number | string | boolean
@@ -73,7 +74,8 @@ class Server {
     const addr = this.server.address()
     const bind =
       typeof addr === "string" ? `pipe ${addr}` : `port ${addr?.port}`
-    console.log(`Server listening on ${bind}`)
+    logger.info(`Server running in ${process.env.NODE_ENV}`)
+    logger.info(`Server listening on ${bind}`)
   }
 
   private initializeTerminus() {
@@ -81,7 +83,7 @@ class Server {
       signals: ["SIGINT", "SIGTERM"],
       onSignal: this.shutDownGracefully.bind(this),
       onShutDown: () => {
-        console.log("Terminus: Shutdown Successfully")
+        logger.info("Terminus: Shutdown Successfully")
       },
       timeout: 15000,
     }
@@ -91,17 +93,17 @@ class Server {
 
   private async shutDownGracefully(): Promise<void> {
     try {
-      console.log("Closing Server Gracefully...")
+      logger.info("Closing Server Gracefully...")
 
       for (const connection of this.connections) {
         connection.end()
       }
 
-      console.log("closing Database")
-      console.log("Database Closed")
-      console.log("Graceful Shutdown successful")
+      logger.info("closing Database")
+      logger.info("Database Closed")
+      logger.info("Graceful Shutdown successful")
     } catch (e: any) {
-      console.log("Graceful Shutdown Failed")
+      logger.error("Graceful Shutdown Failed")
       process.exit(1)
     }
   }
