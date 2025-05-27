@@ -1,5 +1,6 @@
 import config from "config"
 import cors from "cors"
+import logger from "../../../core/logging/logger"
 
 const corsConfig = {
   origin: (
@@ -12,7 +13,7 @@ const corsConfig = {
     ) {
       callback(null, true)
     } else {
-      console.log("Origin not allowed by CORS:", origin)
+      logger.warn("CORS policy violation for origin:", origin)
       callback(new Error("Not allowed by CORS"))
     }
   },
