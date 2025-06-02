@@ -13,5 +13,11 @@ export default defineConfig([
     files: ["**/*.{js,mjs,cjs,ts,mts,cts}"],
     languageOptions: { globals: globals.browser },
   },
-  tseslint.configs.recommended,
+  {
+    ...tseslint.configs.recommended,
+    rules: {
+      ...tseslint.configs.recommended.rules,
+      "@typescript-eslint/no-explicit-any": "off",
+    },
+  },
 ])
