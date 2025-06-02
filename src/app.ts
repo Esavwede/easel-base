@@ -6,6 +6,7 @@ import server404ErrorHandler from "./shared/middleware/errors/server-404-handler
 import apiErrorHandler from "./shared/middleware/errors/api-error-handler"
 import v1Routes from "./versions/v1/modules/routes.v1"
 import attachContextualHttpLoggerToRequest from "./shared/middleware/logging/http-logger"
+import { ensureRequestIdInRequest } from "./shared/middleware/request/request"
 
 const app = express()
 
@@ -21,6 +22,7 @@ app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 
 // Logging
+app.use(ensureRequestIdInRequest)
 app.use(attachContextualHttpLoggerToRequest)
 
 // Versioned Routes
