@@ -1,0 +1,17 @@
+
+// Core Server
+// Core Components 
+// Core services
+// Core App 
+    // Security
+    // Performance
+    // Scalability
+    // Maintainability
+    // Reliability
+// Features
+    // Same Key Qualities 
+// Infrastructure 
+    // Architecture
+    // Deployment 
+    // Devops
+    // CICD

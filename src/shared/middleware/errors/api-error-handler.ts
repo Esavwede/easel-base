@@ -1,5 +1,4 @@
 import { Request, Response, NextFunction } from "express"
-import crypto from "crypto"
 import ApiError from "./api-error"
 import logger from "../../../core/logging/logger"
 
@@ -13,17 +12,18 @@ export default function apiErrorHandler(
   const e = error as ApiError
 
   switch (e.statusCode) {
+    case 400:
+      return res.status(400).json({
+        status: "error",
+        error: { message: e.message, code: e.code },
+      })
+
     case 500:
-      // const errorMetadata = {
-      //   status: "error",
-      //   code: e.statusCode,
-      //   message: "Internal Server Error",
-      //   correlationId: req.get("X-Correlation-ID") || crypto.randomUUID(),
-      // }
+      return res.status(500).json({
+        status: "error",
+        error: { message: e.message, code: e.code },
+      })
 
-      logger.error(e.message, { ...e.data })
-
-      return res.status(500).json({ success: false, msg: "server error" })
     default:
       logger.warn("UNKNOWN_SERVER_ERROR", e.data)
       console.error(e)
