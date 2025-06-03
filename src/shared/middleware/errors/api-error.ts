@@ -9,5 +9,6 @@ export default class ApiError extends Error {
     this.data = {}
     this.statusCode = statusCode
     this.code = code
+    Error.captureStackTrace(this, this.constructor)
   }
 }
