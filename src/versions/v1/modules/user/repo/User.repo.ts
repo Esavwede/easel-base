@@ -5,13 +5,17 @@ import User from "../models/User.model"
 class UserRepo {
   static async findUserByEmail(email: string, logger: pino.Logger) {
     try {
-      return await User.findOne({ email }, { _id: 1 })
+      logger.debug("User_Repo: Executing search query")
+
+      const user = await User.findOne({ email }, { _id: 1 })
+      return user
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (e: any) {
-      logger.error("COULD NOT FIND USER BY EMAIL", {
+      logger.error("User_Repo: Error", {
         layer: "UserRepo",
         action: "FIND USER BY EMAIL",
       })
+
       throw new ApiError(
         500,
         "SIGN_UP_ERROR",
