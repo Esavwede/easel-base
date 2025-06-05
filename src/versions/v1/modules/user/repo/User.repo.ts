@@ -1,6 +1,7 @@
 import pino from "pino"
 import ApiError from "../../../../../shared/middleware/errors/api-error"
 import User from "../models/User.model"
+import { newUser } from "../validation/user.schema"
 
 class UserRepo {
   static async findUserByEmail(email: string, logger: pino.Logger) {
@@ -24,12 +25,11 @@ class UserRepo {
     }
   }
 
-  static async createUser(userData: any, logger: pino.Logger) {
+  static async createUser(userData: newUser, logger: pino.Logger) {
     try {
       logger.debug("User_Repo: Executing create user query")
 
       await User.create(userData)
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (e: any) {
       logger.error("User_Repo: Error", {
         layer: "UserRepo",

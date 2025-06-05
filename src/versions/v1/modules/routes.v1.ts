@@ -2,7 +2,10 @@ import { Router, Application } from "express"
 import logger from "../../../core/logging/logger"
 import UserController from "./user/controller/user.controller"
 import validateRequestSchema from "../../../shared/middleware/validation/validation.middleware"
-import { findUserByEmailSchema } from "./user/validation/user.schema"
+import {
+  findUserByEmailSchema,
+  signupSchema,
+} from "./user/validation/user.schema"
 
 export default function (app: Application) {
   const router = Router()
@@ -16,6 +19,13 @@ export default function (app: Application) {
     validateRequestSchema({ body: findUserByEmailSchema }),
     UserController.findUserByEmail,
   )
+
+  router.post(
+    "/users",
+    validateRequestSchema({ body: signupSchema }),
+    UserController.signupUser,
+  )
+
   logger.info("V1 Routes Loaded")
   app.use("/api/v1", router)
 }
