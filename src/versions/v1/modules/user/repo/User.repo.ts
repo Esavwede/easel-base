@@ -23,6 +23,26 @@ class UserRepo {
       )
     }
   }
+
+  static async createUser(userData: any, logger: pino.Logger) {
+    try {
+      logger.debug("User_Repo: Executing create user query")
+
+      await User.create(userData)
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (e: any) {
+      logger.error("User_Repo: Error", {
+        layer: "UserRepo",
+        action: "CREATE USER",
+      })
+
+      throw new ApiError(
+        500,
+        "SIGN_UP_ERROR",
+        "An unexpected error occurred while processing your request",
+      )
+    }
+  }
 }
 
 export default UserRepo
