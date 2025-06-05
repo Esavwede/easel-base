@@ -14,7 +14,6 @@ class UserService {
 
       return {
         success: false,
-        data: null,
         message: "User not found",
       }
     } else {

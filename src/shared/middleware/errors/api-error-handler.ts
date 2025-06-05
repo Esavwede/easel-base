@@ -10,19 +10,13 @@ export default function apiErrorHandler(
   next: NextFunction,
 ): any {
   const e = error as ApiError
-  const { message, code, statusCode } = e
+  const { message, statusCode } = e
 
   switch (statusCode) {
-    case 400:
-      return res.status(400).json({
-        status: "error",
-        error: { message, code },
-      })
-
     case 500:
       return res.status(500).json({
-        status: "error",
-        error: { message, code },
+        success: false,
+        message,
       })
 
     default:

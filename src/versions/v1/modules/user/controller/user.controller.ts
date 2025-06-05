@@ -23,9 +23,8 @@ export default class UserController {
 
       if (!result.success) {
         logger.info("User_Controller: User not found")
-        res.status(200).json({
+        res.status(404).json({
           success: result.success,
-          data: result.data,
           message: result.message,
         })
         return
