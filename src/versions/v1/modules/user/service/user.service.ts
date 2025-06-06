@@ -3,6 +3,7 @@ import UserRepo from "../repo/User.repo"
 import { newUser } from "../validation/user.schema"
 import { sanitizeUserData } from "../utils/user.utils"
 import ApiError from "../../../../../shared/middleware/errors/api-error"
+import sendWelcomeEmail from "../utils/send-welcome-mail.util"
 
 class UserService {
   static async findUserByEmail(email: string, logger: pino.Logger) {
@@ -53,6 +54,7 @@ class UserService {
       // Create Email Verification Token
       // Store email verification token in cache
       // Send Verification Email
+      await sendWelcomeEmail(userData.email, userData.firstname)
 
       return {
         success: true,
