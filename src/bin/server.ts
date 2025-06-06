@@ -5,6 +5,7 @@ import { createTerminus } from "@godaddy/terminus"
 import app from "../app"
 import startDatabase from "../core/database/database"
 import logger from "../core/logging/logger"
+import connectToRedisServer from "../core/cache/redis-server"
 
 class Server {
   private port: number | string | boolean
@@ -20,6 +21,7 @@ class Server {
 
     this.server = http.createServer(app)
     startDatabase()
+    connectToRedisServer()
     this.initializeTerminus()
     this.listen()
   }
