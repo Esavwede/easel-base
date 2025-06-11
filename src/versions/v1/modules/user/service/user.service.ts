@@ -4,6 +4,7 @@ import { newUser } from "../validation/user.schema"
 import { sanitizeUserData } from "../utils/user.utils"
 import ApiError from "../../../../../shared/middleware/errors/api-error"
 import sendWelcomeEmail from "../utils/send-welcome-mail.util"
+import logger from "../../../../../core/logging/logger"
 
 class UserService {
   static async findUserByEmail(email: string, logger: pino.Logger) {
@@ -72,22 +73,11 @@ class UserService {
   }
 
   static async signInUser(email: string) {
-    try {
-      const user = await UserRepo.getUser(email)
+    const user = await UserRepo.getUser(email)
 
-      if (!user) {
-        return {
-          success: false,
-          message: "check sigin details",
-          statusCode: 401,
-        }
-      }
-    } catch (e: any) {
-      throw new ApiError(
-        500,
-        "SIGN_IN_ERROR",
-        "An unexpected error occurred while processing your request",
-      )
+    if (!user) {
+      logger.warn("User_Service: User not found")
+      throw new ApiError(401, "INCORRECT_DETAILS", "check sign in details")
     }
   }
 }
