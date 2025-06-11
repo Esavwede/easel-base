@@ -62,4 +62,11 @@ export default class UserController {
       next(e)
     }
   }
+
+  static async signinUser(req: Request, res: Response, next: NextFunction) {
+    try {
+    } catch (e: any) {
+      next(e)
+    }
+  }
 }
