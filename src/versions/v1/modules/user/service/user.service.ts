@@ -1,7 +1,7 @@
 import pino from "pino"
 import UserRepo from "../repo/User.repo"
 import { newUser } from "../validation/user.schema"
-import { sanitizeUserData } from "../utils/user.utils"
+import AuthService from "../utils/auth-service.utils"
 import ApiError from "../../../../../shared/middleware/errors/api-error"
 import sendWelcomeEmail from "../utils/send-welcome-mail.util"
 import logger from "../../../../../core/logging/logger"
@@ -74,10 +74,15 @@ class UserService {
 
   static async signInUser(email: string) {
     const user = await UserRepo.getUser(email)
-
     if (!user) {
       logger.warn("User_Service: User not found")
       throw new ApiError(401, "INCORRECT_DETAILS", "check sign in details")
+    }
+
+    const isLocked = await AuthService.checkAccountLock(user._id)
+    if (isLocked) {
+      logger.warn("Account Locked. Cannot signin user at this time.")
+      throw new ApiError(429, "TOO_MUCH", "too many login attempts")
     }
   }
 }
