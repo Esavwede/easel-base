@@ -72,7 +72,7 @@ class UserService {
     }
   }
 
-  static async signInUser(email: string) {
+  static async signInUser(email: string, password: string) {
     const user = await UserRepo.getUser(email)
     if (!user) {
       logger.warn("User_Service: User not found")
@@ -83,6 +83,13 @@ class UserService {
     if (isLocked) {
       logger.warn("Account Locked. Cannot signin user at this time.")
       throw new ApiError(429, "TOO_MUCH", "too many login attempts")
+    }
+
+    const isPasswordValid = await user.comparePassword(password)
+    if (!isPasswordValid) {
+      // increment login attempts
+      logger.warn("Invalid password submitted")
+      throw new ApiError(401, "CHECK_AUTH_DETAILS", "check signin details")
     }
   }
 }
