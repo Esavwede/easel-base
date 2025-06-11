@@ -70,6 +70,26 @@ class UserService {
       )
     }
   }
+
+  static async signInUser(email: string) {
+    try {
+      const user = await UserRepo.getUser(email)
+
+      if (!user) {
+        return {
+          success: false,
+          message: "check sigin details",
+          statusCode: 401,
+        }
+      }
+    } catch (e: any) {
+      throw new ApiError(
+        500,
+        "SIGN_IN_ERROR",
+        "An unexpected error occurred while processing your request",
+      )
+    }
+  }
 }
 
 export default UserService
