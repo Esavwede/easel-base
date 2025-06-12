@@ -5,7 +5,6 @@ import AuthService from "../utils/auth-service.utils"
 import ApiError from "../../../../../shared/middleware/errors/api-error"
 import sendWelcomeEmail from "../utils/send-welcome-mail.util"
 import logger from "../../../../../core/logging/logger"
-import { sanitizeUserData } from "../utils/user.utils"
 
 class UserService {
   static async findUserByEmail(email: string, logger: pino.Logger) {
@@ -95,7 +94,6 @@ class UserService {
     }
 
     // clear signin attempts
-    // generate token
     const sessionId = AuthService.generateSessionId()
 
     const payload = {
@@ -107,13 +105,14 @@ class UserService {
       sessionId,
     }
 
-    user = sanitizeUserData(user)
     const { accessToken, refreshToken } = AuthService.generateTokens(payload)
 
+    await AuthService.storeRefreshToken(refreshToken, payload._id, sessionId)
+
     return {
-      status: "success",
+      success: true,
       data: {
-        user,
+        user: payload,
         accessToken,
         refreshToken,
       },

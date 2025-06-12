@@ -31,7 +31,7 @@ export default class AuthService {
     }
   }
 
-  static async generateSessionId() {
+  static generateSessionId() {
     return uuidv4()
   }
 
@@ -53,5 +53,15 @@ export default class AuthService {
     )
 
     return { accessToken, refreshToken }
+  }
+
+  static async storeRefreshToken(
+    token: string,
+    userId: string,
+    sessionId: string,
+  ) {
+    const expirationInSeconds = 7 * 24 * 60 * 60 // 7 days
+    const refreshTokenKey = `refresh_token:${userId}:${sessionId}`
+    await redis?.set(refreshTokenKey, token, "EX", expirationInSeconds)
   }
 }
