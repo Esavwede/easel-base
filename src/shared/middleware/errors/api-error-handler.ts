@@ -18,9 +18,14 @@ export default function apiErrorHandler(
         success: false,
         message,
       })
-
     case 500:
       return res.status(500).json({
+        success: false,
+        message,
+      })
+
+    case 429:
+      return res.status(429).json({
         success: false,
         message,
       })
