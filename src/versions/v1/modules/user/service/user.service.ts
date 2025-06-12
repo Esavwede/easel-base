@@ -95,7 +95,7 @@ class UserService {
     }
 
     // clear signin attempts
-    // generate tokens
+    // generate token
     user = sanitizeUserData(user)
     return user
   }

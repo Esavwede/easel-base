@@ -52,6 +52,8 @@ class UserRepo {
         {
           _id: 1,
           email: 1,
+          firstname: 1,
+          lastname: 1,
           role: 1,
           isEmailVerified: 1,
           isDeleted: 1,
