@@ -1,4 +1,6 @@
 import { redis } from "../../../../../core/cache/redis-server"
+import jwt, { JwtPayload } from "jsonwebtoken"
+import { v4 as uuidv4 } from "uuid"
 
 export default class AuthService {
   // Properties
@@ -27,5 +29,29 @@ export default class AuthService {
       const lockKey = `account_lock:${userId}`
       await redis?.set(lockKey, "locked", "EX", 900)
     }
+  }
+
+  static async generateSessionId() {
+    return uuidv4()
+  }
+
+  static async generateTokens(payload: JwtPayload) {
+    const accessToken = jwt.sign(payload, process.env.JWT_SECRET_KEY!, {
+      expiresIn: "15m",
+      issuer: "easel-base",
+      audience: "app-users",
+    })
+
+    const refreshToken = jwt.sign(
+      { userId: payload._id, sessionId: payload.sessionId },
+      process.env.JWT_SECRET_KEY!,
+      {
+        expiresIn: "7d",
+        issuer: "easel-base",
+        audience: "app-users",
+      },
+    )
+
+    return { accessToken, refreshToken }
   }
 }
