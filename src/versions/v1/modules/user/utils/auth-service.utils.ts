@@ -35,8 +35,8 @@ export default class AuthService {
     return uuidv4()
   }
 
-  static async generateTokens(payload: JwtPayload) {
-    const accessToken = jwt.sign(payload, process.env.JWT_SECRET_KEY!, {
+  static generateTokens(payload: JwtPayload) {
+    const accessToken = jwt.sign(payload, process.env.JWT_SECRET!, {
       expiresIn: "15m",
       issuer: "easel-base",
       audience: "app-users",
@@ -44,7 +44,7 @@ export default class AuthService {
 
     const refreshToken = jwt.sign(
       { userId: payload._id, sessionId: payload.sessionId },
-      process.env.JWT_SECRET_KEY!,
+      process.env.JWT_REFRESH_SECRET!,
       {
         expiresIn: "7d",
         issuer: "easel-base",

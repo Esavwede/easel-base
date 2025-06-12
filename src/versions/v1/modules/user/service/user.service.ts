@@ -96,8 +96,28 @@ class UserService {
 
     // clear signin attempts
     // generate token
+    const sessionId = AuthService.generateSessionId()
+
+    const payload = {
+      _id: user._id,
+      firstname: user.firstname,
+      lastname: user.lastname,
+      email: user.email,
+      isEmailVerified: user.isEmailVerified,
+      sessionId,
+    }
+
     user = sanitizeUserData(user)
-    return user
+    const { accessToken, refreshToken } = AuthService.generateTokens(payload)
+
+    return {
+      status: "success",
+      data: {
+        user,
+        accessToken,
+        refreshToken,
+      },
+    }
   }
 }
 
