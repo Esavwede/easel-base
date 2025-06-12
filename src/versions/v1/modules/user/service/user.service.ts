@@ -5,6 +5,7 @@ import AuthService from "../utils/auth-service.utils"
 import ApiError from "../../../../../shared/middleware/errors/api-error"
 import sendWelcomeEmail from "../utils/send-welcome-mail.util"
 import logger from "../../../../../core/logging/logger"
+import { sanitizeUserData } from "../utils/user.utils"
 
 class UserService {
   static async findUserByEmail(email: string, logger: pino.Logger) {
@@ -73,7 +74,7 @@ class UserService {
   }
 
   static async signInUser(email: string, password: string) {
-    const user = await UserRepo.getUser(email)
+    var user = await UserRepo.getUser(email)
     if (!user) {
       logger.warn("User_Service: User not found")
       throw new ApiError(401, "INCORRECT_DETAILS", "check sign in details")
@@ -95,6 +96,7 @@ class UserService {
 
     // clear signin attempts
     // generate tokens
+    user = sanitizeUserData(user)
     return user
   }
 }
