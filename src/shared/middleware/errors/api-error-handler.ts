@@ -13,6 +13,12 @@ export default function apiErrorHandler(
   const { message, statusCode } = e
 
   switch (statusCode) {
+    case 401:
+      return res.status(401).json({
+        success: false,
+        message,
+      })
+
     case 500:
       return res.status(500).json({
         success: false,
