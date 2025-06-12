@@ -2,6 +2,7 @@ import pino from "pino"
 import ApiError from "../../../../../shared/middleware/errors/api-error"
 import User from "../models/User.model"
 import { newUser } from "../validation/user.schema"
+import { SignInDto } from "../dtos/signin.dto"
 
 class UserRepo {
   static async findUserByEmail(email: string, logger: pino.Logger) {
@@ -39,6 +40,31 @@ class UserRepo {
       throw new ApiError(
         500,
         "SIGN_UP_ERROR",
+        "An unexpected error occurred while processing your request",
+      )
+    }
+  }
+
+  static async getUser(email: string): Promise<SignInDto | null> {
+    try {
+      return await User.findOne(
+        { email },
+        {
+          _id: 1,
+          email: 1,
+          firstname: 1,
+          lastname: 1,
+          role: 1,
+          isEmailVerified: 1,
+          isDeleted: 1,
+          password: 1,
+          comparePassword: 1,
+        },
+      )
+    } catch (e: any) {
+      throw new ApiError(
+        500,
+        "SIGN_IN_ERROR",
         "An unexpected error occurred while processing your request",
       )
     }

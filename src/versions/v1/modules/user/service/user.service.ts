@@ -1,9 +1,10 @@
 import pino from "pino"
 import UserRepo from "../repo/User.repo"
 import { newUser } from "../validation/user.schema"
-import { sanitizeUserData } from "../utils/user.utils"
+import AuthService from "../utils/auth-service.utils"
 import ApiError from "../../../../../shared/middleware/errors/api-error"
 import sendWelcomeEmail from "../utils/send-welcome-mail.util"
+import logger from "../../../../../core/logging/logger"
 
 class UserService {
   static async findUserByEmail(email: string, logger: pino.Logger) {
@@ -68,6 +69,53 @@ class UserService {
         "Internal Server Error",
         "Error occured while creating user",
       )
+    }
+  }
+
+  static async signInUser(email: string, password: string) {
+    var user = await UserRepo.getUser(email)
+    if (!user) {
+      logger.warn("User_Service: User not found")
+      throw new ApiError(401, "INCORRECT_DETAILS", "check sign in details")
+    }
+
+    const isLocked = await AuthService.checkAccountLock(user._id)
+    if (isLocked) {
+      logger.warn("Account Locked. Cannot signin user at this time.")
+      throw new ApiError(429, "TOO_MUCH", "too many login attempts")
+    }
+
+    const isPasswordValid = await user.comparePassword(password)
+    if (!isPasswordValid) {
+      // increment login attempts
+      AuthService.incrementSigninAttempts(user._id)
+      logger.warn("Invalid password submitted")
+      throw new ApiError(401, "CHECK_AUTH_DETAILS", "check signin details")
+    }
+
+    // clear signin attempts
+    const sessionId = AuthService.generateSessionId()
+
+    const payload = {
+      _id: user._id,
+      firstname: user.firstname,
+      lastname: user.lastname,
+      email: user.email,
+      isEmailVerified: user.isEmailVerified,
+      sessionId,
+    }
+
+    const { accessToken, refreshToken } = AuthService.generateTokens(payload)
+
+    await AuthService.storeRefreshToken(refreshToken, payload._id, sessionId)
+
+    return {
+      success: true,
+      data: {
+        user: payload,
+        accessToken,
+        refreshToken,
+      },
     }
   }
 }
