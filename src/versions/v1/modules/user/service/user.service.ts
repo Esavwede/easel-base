@@ -88,9 +88,14 @@ class UserService {
     const isPasswordValid = await user.comparePassword(password)
     if (!isPasswordValid) {
       // increment login attempts
+      AuthService.incrementSigninAttempts(user._id)
       logger.warn("Invalid password submitted")
       throw new ApiError(401, "CHECK_AUTH_DETAILS", "check signin details")
     }
+
+    // clear signin attempts
+    // generate tokens
+    return user
   }
 }
 

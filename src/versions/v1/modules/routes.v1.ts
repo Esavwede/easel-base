@@ -6,6 +6,7 @@ import {
   findUserByEmailSchema,
   signupSchema,
 } from "./user/validation/user.schema"
+import { signinSchema } from "./user/validation/signin.schema"
 
 export default function (app: Application) {
   const router = Router()
@@ -24,6 +25,12 @@ export default function (app: Application) {
     "/users",
     validateRequestSchema({ body: signupSchema }),
     UserController.signupUser,
+  )
+
+  router.post(
+    "/signin",
+    validateRequestSchema({ body: signinSchema }),
+    UserController.signinUser,
   )
 
   logger.info("V1 Routes Loaded")
