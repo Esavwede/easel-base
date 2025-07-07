@@ -66,8 +66,8 @@ export default class UserController {
 
   static async signinUser(req: Request, res: Response, next: NextFunction) {
     try {
-      const { email, password } = req.body
-      const user: signinReqBody = await UserService.signInUser(email, password)
+      const { email, password }: signinReqBody = req.body
+      const user = await UserService.signInUser(email, password)
       res.status(200).json({ status: "success", data: user })
     } catch (e: any) {
       next(e)
