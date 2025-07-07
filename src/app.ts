@@ -7,8 +7,14 @@ import apiErrorHandler from "./shared/middleware/errors/api-error-handler"
 import v1Routes from "./versions/v1/modules/routes.v1"
 import attachContextualHttpLoggerToRequest from "./shared/middleware/logging/http-logger"
 import { ensureRequestIdInRequest } from "./shared/middleware/request/request"
+import cookieParser from "cookie-parser"
 
 const app = express()
+
+// Request Parsing
+app.use(cookieParser())
+app.use(express.json())
+app.use(express.urlencoded({ extended: true }))
 
 // Security
 app.use(cors)
@@ -16,10 +22,6 @@ app.use(helmet())
 
 // Performance
 app.use(compression())
-
-// Request Parsing
-app.use(express.json())
-app.use(express.urlencoded({ extended: true }))
 
 // Logging
 app.use(ensureRequestIdInRequest)
