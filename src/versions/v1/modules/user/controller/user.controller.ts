@@ -2,6 +2,7 @@ import { Request, Response, NextFunction } from "express"
 import { findUserByEmail } from "../validation/user.schema"
 import UserService from "../service/user.service"
 import { signinReqBody } from "../validation/signin.schema"
+import { strict } from "assert"
 
 export default class UserController {
   static async findUserByEmail(
@@ -68,7 +69,15 @@ export default class UserController {
     try {
       const { email, password }: signinReqBody = req.body
       const user = await UserService.signInUser(email, password)
-      res.status(200).json({ status: "success", data: user })
+
+      res.cookie("refreshToken", user.refreshToken, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "strict",
+        maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+      })
+
+      res.status(200).json({ status: "success", data: user.userData })
     } catch (e: any) {
       next(e)
     }

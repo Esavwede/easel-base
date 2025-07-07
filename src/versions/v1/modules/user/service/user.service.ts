@@ -109,14 +109,15 @@ class UserService {
 
     await AuthService.storeRefreshToken(refreshToken, payload._id, sessionId)
 
-    return {
+    const userData = {
       success: true,
       data: {
         user: payload,
         accessToken,
-        refreshToken,
       },
     }
+
+    return { userData, refreshToken }
   }
 }
 
