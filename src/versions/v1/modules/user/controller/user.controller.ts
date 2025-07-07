@@ -68,6 +68,7 @@ export default class UserController {
 
   static async signinUser(req: Request, res: Response, next: NextFunction) {
     try {
+
       const logger = req.log.child({})
 
       const { email, password }: signinReqBody = req.body
@@ -81,6 +82,7 @@ export default class UserController {
       })
 
       res.status(200).json({ status: "success", data: user.userData })
+
     } catch (e: any) {
       next(e)
     }
@@ -103,6 +105,7 @@ export default class UserController {
       res
         .status(200)
         .json({ status: "success", accessToken: tokens.accessToken })
+
     } catch (e: any) {
       next(e)
     }
