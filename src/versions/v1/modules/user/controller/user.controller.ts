@@ -2,6 +2,7 @@ import { Request, Response, NextFunction } from "express"
 import { findUserByEmail } from "../validation/user.schema"
 import UserService from "../service/user.service"
 import { signinReqBody } from "../validation/signin.schema"
+
 import { strict } from "assert"
 
 export default class UserController {
@@ -67,6 +68,7 @@ export default class UserController {
 
   static async signinUser(req: Request, res: Response, next: NextFunction) {
     try {
+
       const { email, password }: signinReqBody = req.body
       const user = await UserService.signInUser(email, password)
 
