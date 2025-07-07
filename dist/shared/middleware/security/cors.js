@@ -5,15 +5,15 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const config_1 = __importDefault(require("config"));
 const cors_1 = __importDefault(require("cors"));
+const logger_1 = __importDefault(require("../../../core/logging/logger"));
 const corsConfig = {
     origin: (origin, callback) => {
         if (!origin ||
             config_1.default.get("cors.allowedOrigins").includes(origin)) {
-            console.log("Origin allowed by CORS:", origin);
             callback(null, true);
         }
         else {
-            console.log("Origin not allowed by CORS:", origin);
+            logger_1.default.warn("CORS policy violation for origin:", origin);
             callback(new Error("Not allowed by CORS"));
         }
     },

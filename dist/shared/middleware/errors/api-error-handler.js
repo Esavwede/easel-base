@@ -4,39 +4,31 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = apiErrorHandler;
-const crypto_1 = __importDefault(require("crypto"));
-function apiErrorHandler(error, req, res, next) {
+const logger_1 = __importDefault(require("../../../core/logging/logger"));
+function apiErrorHandler(error, req, res, 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+next) {
     const e = error;
-    let response = undefined;
-    switch (e.statusCode) {
-        case 404:
-            response = {
-                status: "error",
-                code: 404,
-                message: `Resource not found: ${req.method} ${req.originalUrl}`,
-                details: e.message,
-            };
-            return res.status(400).json(response);
+    const { message, statusCode } = e;
+    switch (statusCode) {
+        case 401:
+            return res.status(401).json({
+                success: false,
+                message,
+            });
+        case 429:
+            return res.status(429).json({
+                success: false,
+                message,
+            });
         case 500:
-            let correlationId = req.get("X-Correlation-ID") || crypto_1.default.randomUUID();
-            response = {
-                status: "error",
-                code: 500,
-                message: "Internal Server Error",
-                correlationId,
-                details: e.message,
-            };
-            return res.status(500).json(response);
+            return res.status(500).json({
+                success: false,
+                message,
+            });
         default:
-            // Unknown Server Error
-            response = {
-                status: "error",
-                code: 500,
-                message: "Internal Server Error",
-                correlationId: req.get("X-Correlation-ID") || crypto_1.default.randomUUID(),
-                details: "An unexpected error occurred with server: " + e.message,
-            };
-            console.log("FATAL: UNKNOWN SERVER ERROR");
-            return res.status(500).json(response);
+            logger_1.default.warn("UNKNOWN_SERVER_ERROR");
+            logger_1.default.error(e);
+            return res.status(500).json({ success: false, msg: "Server Error" });
     }
 }

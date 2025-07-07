@@ -3,6 +3,8 @@ import { findUserByEmail } from "../validation/user.schema"
 import UserService from "../service/user.service"
 import { signinReqBody } from "../validation/signin.schema"
 
+import { strict } from "assert"
+
 export default class UserController {
   static async findUserByEmail(
     req: Request,
@@ -66,9 +68,18 @@ export default class UserController {
 
   static async signinUser(req: Request, res: Response, next: NextFunction) {
     try {
-      const { email, password } = req.body
-      const user: signinReqBody = await UserService.signInUser(email, password)
-      res.status(200).json({ status: "success", data: user })
+
+      const { email, password }: signinReqBody = req.body
+      const user = await UserService.signInUser(email, password)
+
+      res.cookie("refreshToken", user.refreshToken, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "strict",
+        maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+      })
+
+      res.status(200).json({ status: "success", data: user.userData })
     } catch (e: any) {
       next(e)
     }
