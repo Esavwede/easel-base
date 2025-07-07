@@ -33,6 +33,8 @@ export default function (app: Application) {
     UserController.signinUser,
   )
 
+  router.get("/refreshToken", UserController.refreshToken)
+
   logger.info("V1 Routes Loaded")
   app.use("/api/v1", router)
 }

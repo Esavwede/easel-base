@@ -64,4 +64,9 @@ export default class AuthService {
     const refreshTokenKey = `refresh_token:${userId}:${sessionId}`
     await redis?.set(refreshTokenKey, token, "EX", expirationInSeconds)
   }
+
+  static async invalidateSession(userId: string, sessionId: string) {
+    const key = `refresh_token:${userId}:${sessionId}`
+    await redis?.del(key)
+  }
 }

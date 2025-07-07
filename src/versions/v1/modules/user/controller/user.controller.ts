@@ -67,8 +67,9 @@ export default class UserController {
 
   static async signinUser(req: Request, res: Response, next: NextFunction) {
     try {
+      const logger = req.log.child({})
       const { email, password }: signinReqBody = req.body
-      const user = await UserService.signInUser(email, password)
+      const user = await UserService.signInUser(email, password, logger)
 
       res.cookie("refreshToken", user.refreshToken, {
         httpOnly: true,
@@ -78,6 +79,28 @@ export default class UserController {
       })
 
       res.status(200).json({ status: "success", data: user.userData })
+    } catch (e: any) {
+      next(e)
+    }
+  }
+
+  static async refreshToken(req: Request, res: Response, next: NextFunction) {
+    try {
+      const logger = req.log.child({})
+      const { refreshToken } = req.cookies
+
+      const tokens = await UserService.refreshToken(refreshToken, logger)
+
+      res.cookie("refreshToken", tokens.refreshToken, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "strict",
+        maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+      })
+
+      res
+        .status(200)
+        .json({ status: "success", accessToken: tokens.accessToken })
     } catch (e: any) {
       next(e)
     }

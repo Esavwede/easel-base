@@ -69,6 +69,36 @@ class UserRepo {
       )
     }
   }
+
+  static async findUserById(_id: string, logger: pino.Logger) {
+    try {
+      logger.debug("User_Repo: Executing search query")
+
+      const user = await User.findOne(
+        { _id },
+        {
+          _id: 1,
+          firstname: 1,
+          lastname: 1,
+          email: 1,
+          isEmailVerified: 1,
+        },
+      )
+      return user
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (e: any) {
+      logger.error("User_Repo: Error", {
+        layer: "UserRepo",
+        action: "FIND USER BY ID",
+      })
+
+      throw new ApiError(
+        500,
+        "FIND_USER_BY_ID_ERROR",
+        "An unexpected error occurred while processing your request",
+      )
+    }
+  }
 }
 
 export default UserRepo
