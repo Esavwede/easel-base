@@ -7,6 +7,7 @@ import {
   signupSchema,
 } from "./user/validation/user.schema"
 import { signinSchema } from "./user/validation/signin.schema"
+import authenticateToken from "../../../shared/middleware/auth/tokens/authenticate-token"
 
 export default function (app: Application) {
   const router = Router()
@@ -34,6 +35,8 @@ export default function (app: Application) {
   )
 
   router.get("/refreshToken", UserController.refreshToken)
+
+  router.post("/signout", authenticateToken, UserController.signout)
 
   logger.info("V1 Routes Loaded")
   app.use("/api/v1", router)
